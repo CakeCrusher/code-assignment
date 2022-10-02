@@ -1,29 +1,48 @@
 
+require('dotenv').config();
 const os = require('os');
+const { Umzug, SequelizeStorage } = require("umzug");
+const { Sequelize } = require('sequelize');
 
-var Sequelize = require('sequelize');
-console.log("Sequelize: ", process.env.DB_PASSWORD);
-var sequelize = new Sequelize('server_take_home', 'postgres', process.env.DB_PASSWORD, {
-    host: 'localhost',
-    dialect: 'postgres',
-    logging: null,
-    port: 5432,
-    pool: {
-        max: parseInt(
-            120 / os.cpus().length,
-        ),
-        min: 2,
-        idle: 10000,
-        acquire: 20000,
+console.log("process.env.DB_URL", process.env.DB_URL);
+const sequelize = new Sequelize(process.env.DB_URL);
+
+const migrationConf = {
+    migrations: {
+        glob: "./migrations/*.js",
     },
-    retry: {
-        match:
-            'SequelizeDatabaseError: could not serialize access due to concurrent update',
-        max: 3,
-    },
-});
+    storage: new SequelizeStorage({ sequelize, tableName: "migrations" }),
+    context: sequelize.getQueryInterface(),
+    logger: console,
+};
+
+const runMigrations = async () => {
+    const migrator = new Umzug(migrationConf);
+    const migrations = await migrator.up();
+    console.log("Migrations up to date", {
+        files: migrations.map((mig) => mig.name),
+    });
+};
+
+const connectToDatabase = async () => {
+    try {
+        await sequelize.authenticate();
+        await runMigrations();
+        console.log("Connection has been established successfully.");
+    } catch (error) {
+        console.error("Unable to connect to the database:", error);
+    }
+    return null;
+};
+
+const rollbackMigrations = async () => {
+    await sequelize.authenticate();
+    const migrator = new Umzug(migrationConf);
+    await migrator.down();
+};
 
 module.exports = {
-    Sequelize,
+    connectToDatabase,
+    rollbackMigrations,
     sequelize,
-};
+}

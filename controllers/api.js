@@ -1,6 +1,6 @@
 'use strict';
 
-let {Sequelize, sequelize} = require('../service/db');
+let db = require('../service/db');
 
 exports.creator = async (req, res) => {
     try {

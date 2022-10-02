@@ -1,3 +1,4 @@
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -8,7 +9,8 @@ var indexRouter = require('./routes/index');
 
 var app = express();
 
-const db = require('./models');
+// const db = require('./models');
+const db = require('./service/db');
 const api = require('./controllers/api')
 
 
@@ -45,5 +47,15 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+const PORT = process.env.PORT || 3000;
+
+const start = async () => {
+  await db.connectToDatabase();
+  app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
+  });
+};
+start()
 
 module.exports = app;

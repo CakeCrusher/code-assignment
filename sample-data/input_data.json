@@ -14,6 +14,13 @@
     }
   },
   {
+    "model": "Campaign",
+    "data": {
+      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple123/v4/25/7a/95/257a95b9-9f3b-e07d-04f9-40890d4f8f31/source/512x512bb.jpg",
+      "conversion_event": "install"
+    }
+  },
+  {
     "model": "Install",
     "data": {
       "platform": "ios",

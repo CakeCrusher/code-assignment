@@ -1,12 +1,15 @@
 'use strict';
 
 module.exports = function (sequelize, DataTypes) {
-    var Install = sequelize.define(
-        'Install',
+    var Campaign = sequelize.define(
+        'Campaign',
         {
-            platform: { type: DataTypes.TEXT },
-            country: { type: DataTypes.TEXT },
-            creatorId: { type: DataTypes.INTEGER },
+            iconUrl: {
+                type: DataTypes.STRING,
+            },
+            conversionEvent: {
+                type: DataTypes.STRING,
+            }
         },
         {
             createdAt: 'created_at',
@@ -14,9 +17,9 @@ module.exports = function (sequelize, DataTypes) {
             deletedAt: 'deleted_at',
             paranoid: true,
             underscored: true,
-            tableName: 'install',
+            tableName: 'campaign',
         },
     );
 
-    return Install;
+    return Campaign;
 };
